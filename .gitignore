@@ -10,3 +10,4 @@ results/
 logs/
 evaluation/results/
 exfold/deepseek_v4/csrc/build/
+tmp/
