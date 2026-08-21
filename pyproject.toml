@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "exfold-moe"
+version = "0.1.0"
+description = "Training-free expert folding for MoE prefill and decode"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name = "ExFold authors"}]
+
+[tool.setuptools]
+py-modules = ["sitecustomize"]
+
+[tool.setuptools.packages.find]
+include = ["exfold*"]

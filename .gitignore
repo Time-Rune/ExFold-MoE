@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+*.so
+.deps/
+.venv*/
+build/
+dist/
+*.egg-info/
+results/
+logs/
+evaluation/results/
+exfold/deepseek_v4/csrc/build/
