@@ -130,6 +130,29 @@ Replace `exfold` with `original` for a matched unmodified service. Override the
 budgets with `PREFILL_BUDGET` / `DECODE_BUDGET` for Qwen3 and
 `EXFOLD_PREFILL_TOPK` / `EXFOLD_DECODE_EXPERT_BUDGET` for DeepSeek-V4.
 
+### SGLang deployment image
+
+`docker/sglang-dsv4/Dockerfile` packages the DeepSeek-V4-Flash SGLang runtime,
+the final calibration matrix, and the Hopper CUDA extension. The model weights
+remain mounted at `/workspace/models/DeepSeek-V4-Flash`. Launch Original with:
+
+```bash
+exfold-sglang-serve --enable-exfold false
+```
+
+Launch an ExFold operating point by setting the three deployment parameters:
+
+```bash
+exfold-sglang-serve \
+  --enable-exfold true \
+  --exfold-prefill-k 4 \
+  --exfold-decode-k 128
+```
+
+Ordinary `sglang serve` options can be appended to override the packaged
+DeepSeek-V4 defaults. See `docker/sglang-dsv4/README.md` for the complete launch
+contract. DeepSeek-V4 HashTopK layers remain unmodified in every ExFold mode.
+
 ## Quality Reproduction
 
 One command starts the selected service, waits until it is healthy, evaluates

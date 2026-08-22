@@ -1,6 +1,17 @@
-"""Install the selected ExFold vLLM patch before model modules are imported."""
+"""Install the selected ExFold runtime patch before model modules are imported."""
 
 import os
+
+
+if os.environ.get("EXFOLD_SGLANG_H20_COMPAT", "0") == "1":
+    from exfold_sglang.mhc_compat import install as install_mhc_compat
+
+    install_mhc_compat()
+
+if os.environ.get("EXFOLD_SGLANG_ENABLE", "0") == "1":
+    from exfold_sglang.runtime import install as install_sglang
+
+    install_sglang()
 
 
 model = os.environ.get("EXFOLD_MODEL", "").strip().lower()
