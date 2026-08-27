@@ -184,7 +184,7 @@ The benchmark workloads are intentionally phase-specific:
 | Model | Metric | Workload | ExFold setting |
 |---|---|---|---|
 | Qwen3 | TTFT | 8192 input, 1 output, QPS 1-8 | P4 |
-| Qwen3 | TPOT | 1 input, 256 output, QPS 2-12 | calibrated static D32 |
+| Qwen3 | TPOT | 1 input, 256 output, QPS 2-12 | D32 |
 | DeepSeek-V4 | TTFT | 8192 input, 1 output, concurrency 1 | P3 |
 | DeepSeek-V4 | TPOT | 1 input, 256 output, QPS 64 | D64 |
 
