@@ -30,9 +30,10 @@ At inference time:
 - **Execution:** send only the transformed routes and weights to the standard
   fused MoE operator.
 
-DeepSeek-V4-Flash uses the final unclipped scalar matrix and confidence-aware
-prefill transfer. Qwen3 uses the scalar calibration configuration reported in
-the paper.
+DeepSeek-V4-Flash uses the final unclipped scalar matrix and scalar-Frobenius
+pair loss for both target selection and confidence. Relative projection loss
+is retained only as a calibration diagnostic; it is not used to choose folding
+targets. Qwen3 uses the scalar calibration configuration reported in the paper.
 
 ## Results
 
@@ -40,8 +41,12 @@ the paper.
 
 ![Qwen3 quality results from the ExFold paper](assets/qwen3-quality-table.png)
 
-The repository also includes the final DeepSeek-V4-Flash calibration matrix and
-the matched evaluation entry points used for its benchmark suite.
+![DeepSeek-V4-Flash quality results from the ExFold paper](assets/deepseek-v4-flash-quality-table.png)
+
+The repository includes the final DeepSeek-V4-Flash calibration matrix and the
+matched evaluation entry points used for this full benchmark suite. ExFold
+P3+D128 retains 99.32% of the Original average, while P3+D64 retains 97.68%
+with a 25% decode expert pool.
 
 ### Serving Speed
 
@@ -49,6 +54,14 @@ the matched evaluation entry points used for its benchmark suite.
 
 The supplied scripts reproduce the phase-isolated TTFT and TPOT measurements
 and the end-to-end offline throughput benchmark.
+
+DeepSeek-V4-Flash results on H800 use the same requests for Original and
+ExFold:
+
+| Phase | ExFold setting | Workload | Original | ExFold | Speedup |
+|---|---|---|---:|---:|---:|
+| Prefill TTFT | P3 | 8K input, 1 output, QPS 8 | 8470.13 ms | 6428.87 ms | **1.32x** |
+| Decode TPOT | D64 | 1 input, 256 output, QPS 8 | 16.98 ms | 14.72 ms | **1.15x** |
 
 ## Requirements
 
@@ -108,6 +121,11 @@ Validate the included runtime artifacts before use:
 PYTHONPATH=$PWD python scripts/validate_artifacts.py
 sha256sum -c artifacts/SHA256SUMS
 ```
+
+Validation checks the hashes, shapes, finite values, and the per-layer
+best-pair loss distribution. It rejects a DeepSeek selection matrix whose
+best scalar-Frobenius losses collapse toward 1.0, preventing the historical
+near-random target-selection failure from being published again.
 
 ## Serve
 
@@ -196,6 +214,8 @@ latency result. Do not use the static speed profile to produce quality scores.
 ## Tests
 
 ```bash
+PYTHONPATH=$PWD .venv-dsv4/bin/python -m unittest tests.test_artifacts
+
 PYTHONPATH=$PWD .venv-qwen010/bin/python tests/test_qwen3_calibration.py
 CUDA_VISIBLE_DEVICES=0 PYTHONPATH=$PWD \
   .venv-qwen010/bin/python tests/test_qwen3_kernels.py
@@ -211,3 +231,7 @@ PYTHONPATH=$PWD .venv-qwen010/bin/python tests/test_protocols.py
 
 Please cite the ExFold paper. The final BibTeX entry will be added with the
 camera-ready publication metadata.
+
+## License
+
+ExFold is released under the [Apache License 2.0](LICENSE).

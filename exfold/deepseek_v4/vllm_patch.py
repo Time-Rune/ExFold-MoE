@@ -13,7 +13,6 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Optional
 
-
 def _enabled() -> bool:
     if os.environ.get("DEEPSEEK_V4_RUNTIME_ENABLE", "0") != "1":
         return False
@@ -74,10 +73,12 @@ def _find_phase_metadata(metadata):
 @lru_cache(maxsize=1)
 def _load_calibration(path: str):
     import torch
+    from exfold.artifacts import validate_deepseek_payload
 
     payload = torch.load(path, map_location="cpu", weights_only=False)
     if not isinstance(payload, dict):
         raise ValueError("Calibration artifact must be a dictionary")
+    validate_deepseek_payload(payload)
     prefill_coeff = torch.as_tensor(
         payload.get("prefill_coeff", payload.get("coeff")), dtype=torch.float32
     ).contiguous()
@@ -87,11 +88,11 @@ def _load_calibration(path: str):
             payload.get("selection_loss", payload.get("loss")),
         ),
         dtype=torch.float32,
-    ).contiguous()
+    ).clone().contiguous()
     prefill_confidence_loss = torch.as_tensor(
         payload.get("prefill_confidence_loss", prefill_loss),
         dtype=torch.float32,
-    ).contiguous()
+    ).clone().contiguous()
     decode_coeff = torch.as_tensor(
         payload.get(
             "decode_coeff", payload.get("routing_coeff", payload.get("coeff"))
