@@ -17,8 +17,7 @@ For a source expert output `u_i`, target expert output `v_i`, and calibration
 weight `w_i`, ExFold fits one scalar for each directed expert pair:
 
 ```text
-s*(source -> target) = sum_i w_i <u_i, v_i>
-                       / (sum_i w_i ||v_i||_2^2 + lambda)
+s*(source -> target) = sum_i w_i <u_i, v_i> / (sum_i w_i ||v_i||_2^2 + lambda)
 ```
 
 At inference time:
