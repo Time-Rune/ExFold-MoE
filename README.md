@@ -61,7 +61,7 @@ ExFold:
 | Phase | ExFold setting | Workload | Original | ExFold | Speedup |
 |---|---|---|---:|---:|---:|
 | Prefill TTFT | P3 | 8K input, 1 output, QPS 8 | 8470.13 ms | 6428.87 ms | **1.32x** |
-| Decode TPOT | D64 | 1 input, 256 output, QPS 8 | 16.98 ms | 14.72 ms | **1.15x** |
+| Decode TPOT | D128 | 1 input, 256 output, QPS 8 | 16.98 ms | 14.72 ms | **1.15x** |
 
 ## Requirements
 
